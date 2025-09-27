@@ -1,6 +1,9 @@
 const Paper = require("../models/paper");
 const { uploadFile } = require("../config/cloudinary");
 
+const sanitize = obj =>
+  Object.fromEntries(Object.entries(obj).filter(([key]) => allowedKeys.includes(key)));
+
 const getAll = async (req, res) => {
   try {
     const papers = await Paper.getAllPapers();
@@ -36,10 +39,14 @@ const uploadPaper = async (req, res) => {
     if (!req.files?.file?.[0] || !req.files?.preview?.[0]) {
       return res.status(400).json({ error: "Missing file or preview upload" });
     }
-
+    
     const dto = JSON.parse(req.body.data);
+    delete dto.id;
     dto.fileUrl = await uploadFile(req.files.file[0], "papers");
     dto.previewImageUrl = await uploadFile(req.files.preview[0], "preview");
+
+    delete dto.fileurl;
+    delete dto.previewimageurl;
 
     const [saved] = await Paper.insertPaper(dto);
     res.status(201).json(saved);
@@ -56,10 +63,12 @@ const updatePaper = async (req, res) => {
 
     if (req.files?.preview?.[0]) {
       dto.previewImageUrl = await uploadFile(req.files.preview[0], "preview");
+      delete dto.previewimageurl;
     }
 
     if (req.files?.file?.[0]) {
       dto.fileUrl = await uploadFile(req.files.file[0], "papers");
+      delete dto.fileurl;
     }
 
     const [updated] = await Paper.updatePaper(id, dto);
@@ -77,7 +86,7 @@ const deletePaper = async (req, res) => {
       ? res.send("Paper deleted")
       : res.status(404).send("Paper not found");
   } catch (err) {
-    console.error(" deletePaper error:", err);
+    console.error("deletePaper error:", err);
     res.status(500).json({ error: err.message });
   }
 };
