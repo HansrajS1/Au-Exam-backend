@@ -1,6 +1,17 @@
 const Paper = require("../models/paper");
 const { uploadFile } = require("../config/cloudinary");
 
+const allowedKeys = [
+  "college",
+  "course",
+  "description",
+  "file_url",
+  "preview_image_url",
+  "semester",
+  "subject",
+  "user_email"
+];
+
 const sanitize = obj =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => allowedKeys.includes(key)));
 
@@ -39,15 +50,14 @@ const uploadPaper = async (req, res) => {
     if (!req.files?.file?.[0] || !req.files?.preview?.[0]) {
       return res.status(400).json({ error: "Missing file or preview upload" });
     }
-    
-    const dto = JSON.parse(req.body.data);
-    delete dto.id;
-    dto.fileUrl = await uploadFile(req.files.file[0], "papers");
-    dto.previewImageUrl = await uploadFile(req.files.preview[0], "preview");
 
-    delete dto.fileurl;
-    delete dto.previewimageurl;
+    const raw = JSON.parse(req.body.data);
+    delete raw.id; // prevent duplicate key error
 
+    raw.file_url = await uploadFile(req.files.file[0], "papers");
+    raw.preview_image_url = await uploadFile(req.files.preview[0], "preview");
+
+    const dto = sanitize(raw);
     const [saved] = await Paper.insertPaper(dto);
     res.status(201).json(saved);
   } catch (err) {
@@ -59,18 +69,17 @@ const uploadPaper = async (req, res) => {
 const updatePaper = async (req, res) => {
   try {
     const id = req.params.id;
-    const dto = JSON.parse(req.body.data);
-
-    if (req.files?.preview?.[0]) {
-      dto.previewImageUrl = await uploadFile(req.files.preview[0], "preview");
-      delete dto.previewimageurl;
-    }
+    const raw = JSON.parse(req.body.data);
 
     if (req.files?.file?.[0]) {
-      dto.fileUrl = await uploadFile(req.files.file[0], "papers");
-      delete dto.fileurl;
+      raw.file_url = await uploadFile(req.files.file[0], "papers");
     }
 
+    if (req.files?.preview?.[0]) {
+      raw.preview_image_url = await uploadFile(req.files.preview[0], "preview");
+    }
+
+    const dto = sanitize(raw);
     const [updated] = await Paper.updatePaper(id, dto);
     updated ? res.json(updated) : res.status(404).send("Paper not found");
   } catch (err) {
