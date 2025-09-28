@@ -27,10 +27,22 @@ const toSnakeCase = (raw) => ({
   user_email: raw.userEmail
 });
 
+const toCamelCase = (row) => ({
+  id: row.id,
+  college: row.college,
+  course: row.course,
+  semester: row.semester,
+  subject: row.subject,
+  description: row.description,
+  fileUrl: row.file_url,
+  previewImageUrl: row.preview_image_url,
+  userEmail: row.user_email
+});
+
 const getAll = async (req, res) => {
   try {
     const papers = await Paper.getAllPapers();
-    res.json(papers);
+    res.json(papers.map(toCamelCase));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -39,7 +51,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const paper = await Paper.getPaperById(req.params.id);
-    paper ? res.json(paper) : res.status(404).send("Paper not found");
+    paper ? res.json(toCamelCase(paper)) : res.status(404).send("Paper not found");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -48,7 +60,7 @@ const getById = async (req, res) => {
 const search = async (req, res) => {
   try {
     const results = await Paper.searchBySubject(req.query.subject);
-    res.json(results);
+    res.json(results.map(toCamelCase));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -77,7 +89,7 @@ const uploadPaper = async (req, res) => {
     const dto = sanitize(snakeRaw);
 
     const [saved] = await Paper.insertPaper(dto);
-    res.status(201).json(saved);
+    res.status(201).json(toCamelCase(saved));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -108,7 +120,7 @@ const updatePaper = async (req, res) => {
     const dto = sanitize(snakeRaw);
 
     const [updated] = await Paper.updatePaper(id, dto);
-    updated ? res.json(updated) : res.status(404).send("Paper not found");
+    updated ? res.json(toCamelCase(updated)) : res.status(404).send("Paper not found");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
