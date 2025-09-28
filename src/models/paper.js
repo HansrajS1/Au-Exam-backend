@@ -4,11 +4,13 @@ const allowedKeys = [
   'college',
   'course',
   'description',
-  'fileurl',
-  'previewimageurl',
+  'file_url',
+  'preview_image_url',
   'semester',
-  'subject'
+  'subject',
+  'user_email'
 ];
+
 
 const sanitize = obj =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => allowedKeys.includes(key)));

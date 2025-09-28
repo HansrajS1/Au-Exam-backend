@@ -19,6 +19,4 @@ router.post('/upload', upload.fields([{ name: 'preview' }, { name: 'file' }]), u
 router.put('/:id', upload.fields([{ name: 'preview' }, { name: 'file' }]), updatePaper);
 router.delete('/:id', deletePaper);
 
-
-
 module.exports = router;
