@@ -34,3 +34,7 @@ coverage/
 
 # Optional: Supabase CLI artifacts
 .supabase/
+
+
+README.md
+LICENSE
