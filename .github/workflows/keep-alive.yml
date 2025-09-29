@@ -2,8 +2,8 @@ name: Keep Render App Alive
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   
-  workflow_dispatch:        
+    - cron: "*/5 * * * *"  
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -11,4 +11,20 @@ jobs:
     steps:
       - name: Ping Render App
         run: |
-          curl -s ${{ secrets.RENDER_URL }}/health > /dev/null || echo "App is down"
+          echo "Pinging ${{ secrets.RENDER_URL }}/health ..."
+
+          # Run curl and capture response body, size, status, and time
+          RESPONSE=$(curl -s -o response.txt -w "STATUS:%{http_code} TIME:%{time_total}s SIZE:%{size_download}B\n" "${{ secrets.RENDER_URL }}/health")
+
+          echo "------ Render Health Check ------"
+          echo "Body: $(cat response.txt)"
+          echo "Meta: $RESPONSE"
+          echo "--------------------------------"
+
+          # Fail the job if not 200 OK
+          if [[ $RESPONSE != *"STATUS:200"* ]]; then
+            echo "App is DOWN or unhealthy!"
+            exit 1
+          else
+            echo "App is UP and healthy."
+          fi
