@@ -1,27 +1,25 @@
-name: Keep Render App Alive
+name: Keep Backend App Alive
 
 on:
   schedule:
-    - cron: "*/5 * * * *"  
+    - cron: "*/5 * * * *" 
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Render App
+      - name: Ping App
         run: |
-          echo "Pinging ${{ secrets.RENDER_URL }}/health ..."
+          echo "Pinging ${{ secrets.BASE_URL }}/health ..."
 
-          # Run curl and capture response body, size, status, and time
-          RESPONSE=$(curl -s -o response.txt -w "STATUS:%{http_code} TIME:%{time_total}s SIZE:%{size_download}B\n" "${{ secrets.RENDER_URL }}/health")
+          RESPONSE=$(curl -s -o response.txt -w "STATUS:%{http_code} TIME:%{time_total}s SIZE:%{size_download}B\n" "${{ secrets.BASE_URL }}/health")
 
-          echo "------ Render Health Check ------"
+          echo "------ Backend Health Check ------"
           echo "Body: $(cat response.txt)"
           echo "Meta: $RESPONSE"
           echo "--------------------------------"
-
-          # Fail the job if not 200 OK
+          
           if [[ $RESPONSE != *"STATUS:200"* ]]; then
             echo "App is DOWN or unhealthy!"
             exit 1
