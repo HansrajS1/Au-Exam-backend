@@ -13,8 +13,7 @@ This is the backend service for the for both the [AU Exam App](https://github.co
 ## Tech Stack
 - **Node.js + Express** – RESTful API server  
 - **PostgreSQL + Knex.js** – Relational database and query builder  
-- **Cloudinary** – File and image hosting  
-- **Multer** – File upload middleware  
+- **Cloudinary** – File and image hosting
 - **Supabase** – Optional DB hosting layer  
 - **Dotenv** – Environment variable management  
 
@@ -102,5 +101,6 @@ Delete a paper.
 Built by **Hans Raj** — pragmatic, outcome-driven engineer focused on reproducibility, clarity, and speed.
 
 ---
+
 
 
