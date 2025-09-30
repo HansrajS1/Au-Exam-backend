@@ -1,4 +1,4 @@
-name: Keep Backend App Alive
+name: Backend App Alive
 
 on:
   schedule:
