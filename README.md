@@ -4,6 +4,12 @@ This is the backend service for the for both the [AU Exam App](https://github.co
 
 ---
 
+
+[![Build Status](https://github.com/HansrajS1/Au-Exam-backend/actions/workflows/keep-alive.yml/badge.svg)](https://github.com/HansrajS1/Au-Exam-backend/actions/workflows/keep-alive.yml)
+
+
+
+
 ## Tech Stack
 - **Node.js + Express** – RESTful API server  
 - **PostgreSQL + Knex.js** – Relational database and query builder  
@@ -96,4 +102,5 @@ Delete a paper.
 Built by **Hans Raj** — pragmatic, outcome-driven engineer focused on reproducibility, clarity, and speed.
 
 ---
+
 
