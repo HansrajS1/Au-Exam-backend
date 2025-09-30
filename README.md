@@ -6,8 +6,8 @@ This is the backend service for the for both the [AU Exam App](https://github.co
 ### Monitoring Using Github Action
 [![Build Status](https://github.com/HansrajS1/Au-Exam-backend/actions/workflows/keep-alive.yml/badge.svg)](https://github.com/HansrajS1/Au-Exam-backend/actions/workflows/keep-alive.yml)
 
-
-
+###  CI/CD (Git Actions with Docker)
+[![Build and Push Docker Image](https://github.com/HansrajS1/Au-Exam-backend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/HansrajS1/Au-Exam-backend/actions/workflows/docker-image.yml)
 
 
 ## Tech Stack
@@ -43,6 +43,12 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ```bash
 npm run dev
+```
+Or (cloud hosting using container):
+
+```bash
+docker pull hansrajvvs/au-exam-backend
+docker run -p 10000:10000 --env-file .env hansrajvvs/au-exam-backend
 ```
 
 Server will start on **http://localhost:10000**
@@ -101,6 +107,7 @@ Delete a paper.
 Built by **Hans Raj** — pragmatic, outcome-driven engineer focused on reproducibility, clarity, and speed.
 
 ---
+
 
 
 
