@@ -1,5 +1,3 @@
-const db = require('../config/db');
-
 const allowedKeys = [
   'college',
   'course',
@@ -11,24 +9,36 @@ const allowedKeys = [
   'user_email'
 ];
 
-
 const sanitize = obj =>
   Object.fromEntries(Object.entries(obj).filter(([key]) => allowedKeys.includes(key)));
 
-const getAllPapers = () => db('papers').select('*');
+const withDb = async (fn) => {
+  const db = require('../config/db');
+  try {
+    return await fn(db);
+  } catch (err) {
+    console.error('DB Error:', err);
+    throw err;
+  }
+};
 
-const getPaperById = id => db('papers').where({ id }).first();
+const getAllPapers = () =>
+  withDb(db => db('papers').select('*'));
 
-const searchBySubject = subject =>
-  db('papers').whereILike('subject', `%${subject}%`);
+const getPaperById = (id) =>
+  withDb(db => db('papers').where({ id }).first());
 
-const insertPaper = paper =>
-  db('papers').insert(sanitize(paper)).returning('*');
+const searchBySubject = (subject) =>
+  withDb(db => db('papers').whereILike('subject', `%${subject}%`));
+
+const insertPaper = (paper) =>
+  withDb(db => db('papers').insert(sanitize(paper)).returning('*'));
 
 const updatePaper = (id, paper) =>
-  db('papers').where({ id }).update(sanitize(paper)).returning('*');
+  withDb(db => db('papers').where({ id }).update(sanitize(paper)).returning('*'));
 
-const deletePaper = id => db('papers').where({ id }).del();
+const deletePaper = (id) =>
+  withDb(db => db('papers').where({ id }).del());
 
 module.exports = {
   getAllPapers,
