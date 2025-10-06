@@ -8,7 +8,7 @@ const db = require('./config/db');
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://auexamweb.netlify.app']
+  origin: ['http://localhost:5173', 'https://https://auexamapp.tech/']
 }));
 
 app.use(express.json());
