@@ -1,6 +1,6 @@
-const cloudinary = require('cloudinary').v2;
-const fs = require('fs');
-const path = require('path');
+import { v2 as cloudinary } from 'cloudinary';
+import fs from "fs";
+import path from "path";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,31 +8,29 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadFile = async (file, folder) => {
+export const uploadFile = async (file, folder) => {
   try {
     if (!file?.path) {
-      throw new Error('Missing file path');
+      throw new Error("Missing file path");
     }
 
-    const absolutePath = path.resolve(file.path); 
+    const absolutePath = path.resolve(file.path);
     if (!fs.existsSync(absolutePath)) {
       throw new Error(`File not found: ${absolutePath}`);
     }
 
     const result = await cloudinary.uploader.upload(absolutePath, {
-      resource_type: 'auto',
+      resource_type: "auto",
       folder: folder || undefined,
     });
 
     fs.unlinkSync(absolutePath);
-    return result.secure_url; 
+    return result.secure_url;
   } catch (err) {
-    console.error('Cloudinary upload error:', err);
+    console.error("Cloudinary upload error:", err);
     throw {
-      message: err.message || 'Upload failed',
+      message: err.message || "Upload failed",
       http_code: err.http_code || 500,
     };
   }
 };
-
-module.exports = { uploadFile };

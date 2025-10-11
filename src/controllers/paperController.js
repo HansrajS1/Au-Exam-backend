@@ -1,15 +1,13 @@
-const Paper = require("../models/paper");
-const { uploadFile } = require("../config/cloudinary");
-const { toCamelCase, toSnakeCase } = require("../utils/dtoMapper");
-const { allowedPaperKeys } = require("../utils/dtoMapper");
-
+import * as Paper from '../models/paper.js';
+import { uploadFile } from '../config/cloudinary.js';
+import { toCamelCase, toSnakeCase, allowedPaperKeys } from '../utils/dtoMapper.js';
 
 const sanitize = (obj) =>
   Object.fromEntries(
     Object.entries(obj).filter(([key]) => allowedPaperKeys.includes(key))
   );
 
-const getAll = async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 30;
@@ -27,20 +25,20 @@ const getAll = async (req, res) => {
   }
 };
 
-const getById = async (req, res) => {
+export const getById = async (req, res) => {
   try {
     const paper = await Paper.getPaperById(req.params.id);
     paper
       ? res.json(toCamelCase(paper))
-      : res.status(404).send("Paper not found");
+      : res.status(404).send('Paper not found');
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-const search = async (req, res) => {
+export const search = async (req, res) => {
   try {
-    const subject = req.query.subject || "";
+    const subject = req.query.subject || '';
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 30;
     const offset = (page - 1) * limit;
@@ -57,24 +55,24 @@ const search = async (req, res) => {
   }
 };
 
-const uploadPaper = async (req, res) => {
+export const uploadPaper = async (req, res) => {
   try {
     if (!req.files?.file?.[0] || !req.files?.preview?.[0]) {
-      return res.status(400).json({ error: "Missing file or preview upload" });
+      return res.status(400).json({ error: 'Missing file or preview upload' });
     }
 
     let raw;
     try {
       raw = JSON.parse(req.body.data);
     } catch {
-      return res.status(400).json({ error: "Invalid JSON in data field" });
+      return res.status(400).json({ error: 'Invalid JSON in data field' });
     }
 
     delete raw.id;
 
-    raw.fileUrl = await uploadFile(req.files.file[0], "papers");
-    raw.previewImageUrl = await uploadFile(req.files.preview[0], "preview");
-    raw.userEmail = raw.userEmail || req.user?.email || "unknown@user.com";
+    raw.fileUrl = await uploadFile(req.files.file[0], 'papers');
+    raw.previewImageUrl = await uploadFile(req.files.preview[0], 'preview');
+    raw.userEmail = raw.userEmail || req.user?.email || 'unknown@user.com';
 
     const snakeRaw = toSnakeCase(raw);
     const dto = sanitize(snakeRaw);
@@ -86,26 +84,26 @@ const uploadPaper = async (req, res) => {
   }
 };
 
-const updatePaper = async (req, res) => {
+export const updatePaper = async (req, res) => {
   try {
     let raw;
     try {
       raw = JSON.parse(req.body.data);
     } catch {
-      return res.status(400).json({ error: "Invalid JSON in data field" });
+      return res.status(400).json({ error: 'Invalid JSON in data field' });
     }
 
     const id = req.params.id;
 
     if (req.files?.file?.[0]) {
-      raw.fileUrl = await uploadFile(req.files.file[0], "papers");
+      raw.fileUrl = await uploadFile(req.files.file[0], 'papers');
     }
 
     if (req.files?.preview?.[0]) {
-      raw.previewImageUrl = await uploadFile(req.files.preview[0], "preview");
+      raw.previewImageUrl = await uploadFile(req.files.preview[0], 'preview');
     }
 
-    raw.userEmail = raw.userEmail || req.user?.email || "unknown@user.com";
+    raw.userEmail = raw.userEmail || req.user?.email || 'unknown@user.com';
 
     const snakeRaw = toSnakeCase(raw);
     const dto = sanitize(snakeRaw);
@@ -113,28 +111,19 @@ const updatePaper = async (req, res) => {
     const [updated] = await Paper.updatePaper(id, dto);
     updated
       ? res.json(toCamelCase(updated))
-      : res.status(404).send("Paper not found");
+      : res.status(404).send('Paper not found');
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-const deletePaper = async (req, res) => {
+export const deletePaper = async (req, res) => {
   try {
     const deleted = await Paper.deletePaper(req.params.id);
     deleted
-      ? res.send("Paper deleted")
-      : res.status(404).send("Paper not found");
+      ? res.send('Paper deleted')
+      : res.status(404).send('Paper not found');
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-};
-
-module.exports = {
-  getAll,
-  getById,
-  search,
-  uploadPaper,
-  updatePaper,
-  deletePaper,
 };
