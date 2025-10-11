@@ -1,48 +1,26 @@
 const Paper = require("../models/paper");
 const { uploadFile } = require("../config/cloudinary");
-const path = require("path");
-
-const allowedKeys = [
-  "college",
-  "course",
-  "description",
-  "file_url",
-  "preview_image_url",
-  "semester",
-  "subject",
-  "user_email"
-];
+const { toCamelCase, toSnakeCase } = require("../utils/dtoMapper");
+const { allowedPaperKeysSnake } = require("../utils/dtoMapper");
 
 const sanitize = (obj) =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => allowedKeys.includes(key)));
-
-const toSnakeCase = (raw) => ({
-  college: raw.college,
-  course: raw.course,
-  semester: raw.semester,
-  subject: raw.subject,
-  description: raw.description,
-  file_url: raw.fileUrl,
-  preview_image_url: raw.previewImageUrl,
-  user_email: raw.userEmail
-});
-
-const toCamelCase = (row) => ({
-  id: row.id,
-  college: row.college,
-  course: row.course,
-  semester: row.semester,
-  subject: row.subject,
-  description: row.description,
-  fileUrl: row.file_url,
-  previewImageUrl: row.preview_image_url,
-  userEmail: row.user_email
-});
+  Object.fromEntries(
+    Object.entries(obj).filter(([key]) => allowedPaperKeysSnake.includes(key))
+  );
 
 const getAll = async (req, res) => {
   try {
-    const papers = await Paper.getAllPapers();
-    res.json(papers.map(toCamelCase));
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 30;
+    const offset = (page - 1) * limit;
+
+    const papers = await Paper.getAllPapers(limit, offset);
+    const count = await Paper.countAllPapers();
+
+    res.json({
+      papers: papers.map(toCamelCase),
+      total: count.total,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -51,7 +29,9 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const paper = await Paper.getPaperById(req.params.id);
-    paper ? res.json(toCamelCase(paper)) : res.status(404).send("Paper not found");
+    paper
+      ? res.json(toCamelCase(paper))
+      : res.status(404).send("Paper not found");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -59,8 +39,18 @@ const getById = async (req, res) => {
 
 const search = async (req, res) => {
   try {
-    const results = await Paper.searchBySubject(req.query.subject);
-    res.json(results.map(toCamelCase));
+    const subject = req.query.subject || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 30;
+    const offset = (page - 1) * limit;
+
+    const results = await Paper.searchBySubject(subject, limit, offset);
+    const count = await Paper.countSearchResults(subject);
+
+    res.json({
+      papers: results.map(toCamelCase),
+      total: count.total,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -120,7 +110,9 @@ const updatePaper = async (req, res) => {
     const dto = sanitize(snakeRaw);
 
     const [updated] = await Paper.updatePaper(id, dto);
-    updated ? res.json(toCamelCase(updated)) : res.status(404).send("Paper not found");
+    updated
+      ? res.json(toCamelCase(updated))
+      : res.status(404).send("Paper not found");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -129,7 +121,9 @@ const updatePaper = async (req, res) => {
 const deletePaper = async (req, res) => {
   try {
     const deleted = await Paper.deletePaper(req.params.id);
-    deleted ? res.send("Paper deleted") : res.status(404).send("Paper not found");
+    deleted
+      ? res.send("Paper deleted")
+      : res.status(404).send("Paper not found");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -141,5 +135,5 @@ module.exports = {
   search,
   uploadPaper,
   updatePaper,
-  deletePaper
+  deletePaper,
 };

@@ -1,4 +1,15 @@
-const toSnakeCase = raw => ({
+const allowedPaperKeys = [
+  "college",
+  "course",
+  "description",
+  "file_url",
+  "preview_image_url",
+  "semester",
+  "subject",
+  "user_email"
+];
+
+const toDatabaseFormat = raw => ({
   college: raw.college,
   course: raw.course,
   semester: raw.semester,
@@ -21,4 +32,8 @@ const toCamelCase = row => ({
   userEmail: row.user_email
 });
 
-module.exports = { toSnakeCase, toCamelCase };
+module.exports = {
+  allowedPaperKeys,
+  toDatabaseFormat,
+  toCamelCase
+};

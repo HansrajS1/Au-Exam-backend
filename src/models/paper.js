@@ -1,37 +1,56 @@
-const db = require('../config/db');
-
-const allowedKeys = [
-  'college',
-  'course',
-  'description',
-  'file_url',
-  'preview_image_url',
-  'semester',
-  'subject',
-  'user_email'
-];
+const db = require("../config/db");
+const { allowedPaperKeysCamel } = require("../utils/dtoMapper");
 
 const sanitize = (obj) =>
   Object.fromEntries(
-    Object.entries(obj).filter(([key]) => allowedKeys.includes(key))
+    Object.entries(obj).filter(([key]) => allowedPaperKeysCamel.includes(key))
   );
 
-const getAllPapers = () => db('papers').select('*');
+const getAllPapers = (limit = 30, offset = 0) =>
+  db("papers")
+    .select("*")
+    .orderBy("id", "desc")
+    .limit(limit)
+    .offset(offset);
 
 const getPaperById = (id) =>
-  db('papers').where({ id }).first();
+  db("papers")
+    .where({ id })
+    .first();
 
-const searchBySubject = (subject) =>
-  db('papers').whereILike('subject', `%${subject}%`);
+const searchBySubject = (subject, limit = 30, offset = 0) =>
+  db("papers")
+    .whereILike("subject", `%${subject}%`)
+    .orderBy("id", "desc")
+    .limit(limit)
+    .offset(offset);
 
 const insertPaper = (paper) =>
-  db('papers').insert(sanitize(paper)).returning('*');
+  db("papers")
+    .insert(sanitize(paper))
+    .returning("*");
 
 const updatePaper = (id, paper) =>
-  db('papers').where({ id }).update(sanitize(paper)).returning('*');
+  db("papers")
+    .where({ id })
+    .update(sanitize(paper))
+    .returning("*");
 
 const deletePaper = (id) =>
-  db('papers').where({ id }).del();
+  db("papers")
+    .where({ id })
+    .del();
+
+const countAllPapers = () =>
+  db("papers")
+    .count("* as total")
+    .first();
+
+const countSearchResults = (subject) =>
+  db("papers")
+    .whereILike("subject", `%${subject}%`)
+    .count("* as total")
+    .first();
 
 module.exports = {
   getAllPapers,
@@ -40,4 +59,6 @@ module.exports = {
   insertPaper,
   updatePaper,
   deletePaper,
+  countAllPapers,
+  countSearchResults,
 };
