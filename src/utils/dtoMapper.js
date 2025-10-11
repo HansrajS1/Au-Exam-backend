@@ -9,7 +9,7 @@ const allowedPaperKeys = [
   "user_email"
 ];
 
-const toDatabaseFormat = raw => ({
+const toSnakeCase = raw => ({
   college: raw.college,
   course: raw.course,
   semester: raw.semester,
@@ -34,6 +34,6 @@ const toCamelCase = row => ({
 
 module.exports = {
   allowedPaperKeys,
-  toDatabaseFormat,
+  toSnakeCase,
   toCamelCase
 };

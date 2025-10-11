@@ -1,9 +1,12 @@
 const db = require("../config/db");
-const { allowedPaperKeysCamel } = require("../utils/dtoMapper");
+const { allowedPaperKeys } = require("../utils/dtoMapper");
+
+
+
 
 const sanitize = (obj) =>
   Object.fromEntries(
-    Object.entries(obj).filter(([key]) => allowedPaperKeysCamel.includes(key))
+    Object.entries(obj).filter(([key]) => allowedPaperKeys.includes(key))
   );
 
 const getAllPapers = (limit = 30, offset = 0) =>

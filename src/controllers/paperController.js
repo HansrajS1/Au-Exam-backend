@@ -1,11 +1,12 @@
 const Paper = require("../models/paper");
 const { uploadFile } = require("../config/cloudinary");
 const { toCamelCase, toSnakeCase } = require("../utils/dtoMapper");
-const { allowedPaperKeysSnake } = require("../utils/dtoMapper");
+const { allowedPaperKeys } = require("../utils/dtoMapper");
+
 
 const sanitize = (obj) =>
   Object.fromEntries(
-    Object.entries(obj).filter(([key]) => allowedPaperKeysSnake.includes(key))
+    Object.entries(obj).filter(([key]) => allowedPaperKeys.includes(key))
   );
 
 const getAll = async (req, res) => {
