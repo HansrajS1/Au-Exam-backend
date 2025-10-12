@@ -5,7 +5,6 @@ dotenv.config();
 
 const ALLOWED_ORIGINS = [
   "https://auexamweb.netlify.app",
-  "http://localhost:5173",
   "https://auexamapp.tech"
 ];
 

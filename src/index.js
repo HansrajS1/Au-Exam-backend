@@ -12,7 +12,6 @@ const app = express();
 
 app.use(cors({
   origin: [
-    'http://localhost:5173',
     'https://auexamweb.netlify.app',
     'https://auexamapp.tech',
   ],
