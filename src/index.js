@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { askAI } from './controllers/askController.js';
 import paperRoutes from './routes/paperRoutes.js';
 import db from './config/db.js';
+import { securityMiddleware } from './middlewares/security.js';
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use(securityMiddleware);
 
 app.use('/api/papers', paperRoutes);
 
