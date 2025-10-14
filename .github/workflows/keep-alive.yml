@@ -1,8 +1,8 @@
-name: Backend App Alive
+name: Backend live Monitoring
 
 on:
   schedule:
-    - cron: "*/5 * * * *" 
+    - cron: "0 * * * *" 
   workflow_dispatch:
 
 jobs:
