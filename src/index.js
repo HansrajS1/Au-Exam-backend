@@ -27,7 +27,23 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-app.get('/health', (req, res) => res.send('OK'));
+app.get('/health', async (req, res) => {
+  try {
+    await db.raw('SELECT 1');
+    res.status(200).json({
+      status: 'ok',
+      database: 'connected',
+      message: 'Server and DB healthy'
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      database: 'unavailable',
+      message: 'Database connection failed',
+      error: error.message
+    });
+  }
+});
 
 app.post('/api/ask', askAI);
 
