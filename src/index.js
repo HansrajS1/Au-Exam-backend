@@ -47,6 +47,10 @@ app.get('/health', async (req, res) => {
 
 app.post('/api/ask', askAI);
 
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'Something went wrong!' });
