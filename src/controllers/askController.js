@@ -12,6 +12,7 @@ export async function askAI(req, res) {
   const { messages } = req.body;
   const completion = await openai.chat.completions.create({
     model: "openai/gpt-4o",
+    max_tokens: 500,
     messages,
   });
   res.json(completion);
