@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    'https://auexamweb.netlify.app',
+    'https://auexamapp.pages.dev/',
     'https://auexamapp.tech',
   ],
 }));
