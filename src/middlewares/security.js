@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const ALLOWED_ORIGINS = [
-  "https://auexamweb.netlify.app",
+  "https://auexamapp.pages.dev",
   "https://auexamapp.tech"
 ];
 
