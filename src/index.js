@@ -12,8 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: [
-    'https://auexamapp.pages.dev',
-    'http://localhost:5173/'
+    'https://auexamapp.pages.dev'
   ],
 }));
 

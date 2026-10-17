@@ -4,8 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const ALLOWED_ORIGINS = [
-  "https://auexamapp.pages.dev",
-  "http://localhost:5173/"
+  "https://auexamapp.pages.dev"
 ];
 
 export const securityMiddleware = (req, res, next) => {
