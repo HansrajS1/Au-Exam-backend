@@ -2,7 +2,7 @@ name: Backend live Monitoring
 
 on:
   schedule:
-    - cron: "0 3 */3 * *" 
+    - cron: "17 */6 * * *" 
   workflow_dispatch:
 
 jobs:
